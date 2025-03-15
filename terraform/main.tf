@@ -56,8 +56,27 @@ resource "aws_ecs_task_definition" "main_ecs_task_definition" {
           protocol      = "tcp"
         }
       ]
+      "mountPoints" : [
+        {
+          "sourceVolume" : "nginx-logs",
+          "containerPath" : "/var/log/nginx/"
+        }
+      ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = "xdeploy-logs"
+          "awslogs-stream-prefix" = "xdeploy"
+          "awslogs-region"        = var.aws_region
+        }
+      }
+
     }
   ])
+  volume {
+    name      = "xdeploy-logs"
+    host_path = "/home/ec2-user/main-logs/"
+  }
 }
 
 # Define the ECS service that will run the task
