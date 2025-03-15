@@ -50,5 +50,5 @@ variable "ec2_image_type" {
 
 variable "main_key_pair" {
   type    = string
-  default = "main-key=pair"
+  default = "main-key-pair"
 }

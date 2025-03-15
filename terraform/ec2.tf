@@ -1,3 +1,5 @@
+
+
 # Define a launch template to create EC2
 resource "aws_launch_template" "main_ecs_launch_template" {
   name_prefix   = "main-ecs-template"
@@ -7,7 +9,7 @@ resource "aws_launch_template" "main_ecs_launch_template" {
   key_name               = var.main_key_pair
   vpc_security_group_ids = [aws_security_group.main_security_group.id]
   iam_instance_profile {
-    name = "ecsInstanceRole"
+    name = aws_iam_instance_profile.main_profile.name
   }
 
   tag_specifications {

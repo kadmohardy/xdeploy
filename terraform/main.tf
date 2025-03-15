@@ -1,16 +1,3 @@
-# Create ECR for xdeploy images
-resource "aws_ecr_repository" "ecr" {
-  name                 = "xdeploy"
-  image_tag_mutability = var.image_mutability
-  encryption_configuration {
-    encryption_type = var.encrypt_type
-  }
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-  tags = var.tags
-}
-
 # Create ECS cluster 
 resource "aws_ecs_cluster" "main_ecs_cluster" {
   name = "main-ecs-cluster"
@@ -47,12 +34,14 @@ resource "aws_ecs_cluster_capacity_providers" "main_ecs_cluster_capacity_provide
 resource "aws_ecs_task_definition" "main_ecs_task_definition" {
   family             = "main-ecs-task"
   network_mode       = "awsvpc"
-  execution_role_arn = "arn:aws:iam::684644783255:role/ecsTaskExecutionRole"
+  execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
   cpu                = 256
+
   runtime_platform {
     operating_system_family = "LINUX"
     cpu_architecture        = "X86_64"
   }
+
   container_definitions = jsonencode([
     {
       name      = "dockergs"
@@ -100,7 +89,7 @@ resource "aws_ecs_service" "main_ecs_service" {
   load_balancer {
     target_group_arn = aws_lb_target_group.main_ecs_tg.arn
     container_name   = "dockergs"
-    container_port   = 80
+    container_port   = 4000
   }
 
   depends_on = [aws_autoscaling_group.main_esc_asg]
