@@ -44,8 +44,9 @@ resource "aws_ecs_task_definition" "main_ecs_task_definition" {
 
   container_definitions = jsonencode([
     {
-      name      = "dockergs"
-      image     = aws_ecr_repository.ecr.repository_url
+      name = "dockergs"
+      # image     = aws_ecr_repository.ecr.repository_url
+      image     = "755209495094.dkr.ecr.us-east-1.amazonaws.com/xdeploy:latest"
       cpu       = 256
       memory    = 512
       essential = true
@@ -56,10 +57,10 @@ resource "aws_ecs_task_definition" "main_ecs_task_definition" {
           protocol      = "tcp"
         }
       ]
-      "mountPoints" : [
+      mountPoints = [
         {
-          "sourceVolume" : "nginx-logs",
-          "containerPath" : "/var/log/nginx/"
+          "sourceVolume" : "xdeploy-logs",
+          "containerPath" : "/var/log/xdeploy/"
         }
       ]
       logConfiguration = {
